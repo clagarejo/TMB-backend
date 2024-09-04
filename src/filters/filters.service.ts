@@ -43,13 +43,33 @@ export class FiltersService {
                     `${this.baseUrl}/discover/movie?api_key=${this.apiKey}&with_genres=${genreId}&language=en-US`
                 )
             );
-            return response.data.results; // Devuelve solo la lista de películas
+            return response.data.results;
         } catch (error) {
             console.error('There was a problem with fetching movies by genre:', error.response?.data || error.message);
             throw new HttpException(
                 {
                     ok: false,
                     msg: 'There was a problem with fetching movies by genre. Please try again.',
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    async getMoviesBySearch(search: string): Promise<any> {
+        try {
+            const response = await firstValueFrom(
+                this.httpService.get(
+                    `${this.baseUrl}/search/movie?api_key=${this.apiKey}&query=${encodeURIComponent(search)}&language=en-US`
+                )
+            );
+            return response.data.results;
+        } catch (error) {
+            console.error('There was a problem with fetching movies by search:', error.response?.data || error.message);
+            throw new HttpException(
+                {
+                    ok: false,
+                    msg: 'There was a problem with fetching movies by search. Please try again.',
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );

@@ -1,18 +1,20 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-    private readonly API_KEY = 'e529ec79d9bc41bb316212a042c85e7e';
-
-    constructor(private readonly httpService: HttpService) { }
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly configService: ConfigService,
+    ) { }
 
     async getRequestToken(): Promise<any> {
         try {
             const response = await firstValueFrom(
                 this.httpService.get(
-                    `/authentication/token/new?api_key=${this.API_KEY}`
+                    `/authentication/token/new?api_key=${this.configService.get<string>('API_KEY')}` // Usa ConfigService para obtener la API_KEY
                 )
             );
 
@@ -33,11 +35,11 @@ export class AuthService {
         try {
             const response = await firstValueFrom(
                 this.httpService.post(
-                    `/authentication/token/validate_with_login?api_key=${this.API_KEY}`,
+                    `/authentication/token/validate_with_login?api_key=${this.configService.get<string>('API_KEY')}`, // Usa ConfigService
                     {
                         request_token: requestToken,
                         username: username,
-                        password: password
+                        password: password,
                     }
                 )
             );
@@ -69,12 +71,12 @@ export class AuthService {
         try {
             const response = await firstValueFrom(
                 this.httpService.post(
-                    `/authentication/session/new?api_key=${this.API_KEY}`,
+                    `/authentication/session/new?api_key=${this.configService.get<string>('API_KEY')}`, // Usa ConfigService
                     { request_token }
                 )
             );
 
-            console.log({ response })
+            console.log({ response });
 
             if (!response.data || !response.data.success) {
                 throw new HttpException(
@@ -98,6 +100,4 @@ export class AuthService {
             );
         }
     }
-
-
 }

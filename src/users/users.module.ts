@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
     imports: [
@@ -17,7 +17,7 @@ import { HttpModule, HttpService } from '@nestjs/axios';
             }),
         }),
     ],
-    controllers: [AuthController],
-    providers: [AuthService],
+    controllers: [UsersController],
+    providers: [UsersService],
 })
-export class AuthModule { }
+export class UsersModule { }
